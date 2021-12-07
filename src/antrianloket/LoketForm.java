@@ -6,6 +6,17 @@
 package antrianloket;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,9 +27,57 @@ public class LoketForm extends javax.swing.JFrame {
     /**
      * Creates new form LoketForm
      */
-    public LoketForm() {
-        initComponents();
-        getContentPane().setBackground(Color.GRAY);
+    public static DatagramSocket clientsocket;
+    public static DatagramPacket dp;
+    public static BufferedReader dis;
+    public static InetAddress ia;
+    public static byte buf[] = new byte[1024];
+    public static int cport = 789, sport = 790;
+    
+    public ArrayList<String> antrianAdmin = new ArrayList<String>();
+    public ArrayList<String> antrianTeller = new ArrayList<String>();
+    public ArrayList<String> antrianCs = new ArrayList<String>();
+    
+    public int nomorAntrianAdmin =0;
+    public int nomorAntrianTeller =0;
+    public int nomorAntrianCs =0;
+
+    public LoketForm() throws IOException {
+        try {
+            initComponents();
+            getContentPane().setBackground(Color.GRAY);
+            try {
+                clientsocket = new DatagramSocket(cport);
+            } catch (SocketException ex) {
+                Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            dp = new DatagramPacket(buf, buf.length);
+            dis = new BufferedReader(new InputStreamReader(System.in));
+            ia = InetAddress.getLocalHost();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void receive() throws IOException{
+        clientsocket.receive(dp);
+        String str = new String(dp.getData(), 0,dp.getLength());
+        switch (str.charAt(0)) {
+            case 'A':
+                antrianAdmin.add(str);
+                lblTotalAntrianAdmin.setText(String.valueOf(antrianAdmin.size()));
+                break;
+            case 'T':
+                antrianTeller.add(str);
+                lblTotalAntrianTeller.setText(String.valueOf(antrianTeller.size()));
+                break;
+            default:
+                antrianCs.add(str);
+                lblTotalAntrianCs.setText(String.valueOf(antrianCs.size()));
+                break;
+        }
+        
     }
 
     /**
@@ -53,11 +112,11 @@ public class LoketForm extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JSeparator();
         jPanel6 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        lblTotalAntrianAdmin = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jSeparator9 = new javax.swing.JSeparator();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
+        lblTotalAntrianCs = new javax.swing.JLabel();
+        lblTotalAntrianTeller = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jSeparator10 = new javax.swing.JSeparator();
@@ -230,7 +289,6 @@ public class LoketForm extends javax.swing.JFrame {
 
         jLabel10.setBackground(new java.awt.Color(255, 255, 255));
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setText("ADMIN");
 
@@ -286,25 +344,25 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel16.setText("ADMIN");
 
-        jLabel17.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel17.setText("3");
+        lblTotalAntrianAdmin.setBackground(new java.awt.Color(255, 255, 255));
+        lblTotalAntrianAdmin.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        lblTotalAntrianAdmin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalAntrianAdmin.setText("0");
 
         jLabel18.setBackground(new java.awt.Color(255, 255, 255));
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel18.setText("TOTAL ANTRIAN");
 
-        jLabel19.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel19.setText("1");
+        lblTotalAntrianCs.setBackground(new java.awt.Color(255, 255, 255));
+        lblTotalAntrianCs.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        lblTotalAntrianCs.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalAntrianCs.setText("0");
 
-        jLabel20.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel20.setText("2");
+        lblTotalAntrianTeller.setBackground(new java.awt.Color(255, 255, 255));
+        lblTotalAntrianTeller.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        lblTotalAntrianTeller.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalAntrianTeller.setText("0");
 
         jLabel21.setBackground(new java.awt.Color(255, 255, 255));
         jLabel21.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -327,15 +385,15 @@ public class LoketForm extends javax.swing.JFrame {
                     .addComponent(jSeparator9, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTotalAntrianAdmin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lblTotalAntrianTeller, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(29, 29, 29)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTotalAntrianCs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
                     .addComponent(jSeparator10, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
@@ -349,9 +407,9 @@ public class LoketForm extends javax.swing.JFrame {
                 .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTotalAntrianCs, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                    .addComponent(lblTotalAntrianAdmin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTotalAntrianTeller, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
@@ -400,7 +458,7 @@ public class LoketForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-        
+
     }//GEN-LAST:event_jPanel1MouseClicked
 
     private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
@@ -449,7 +507,12 @@ public class LoketForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoketForm().setVisible(true);
+                try {
+                    new LoketForm().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }
         });
     }
@@ -459,15 +522,9 @@ public class LoketForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
@@ -481,7 +538,6 @@ public class LoketForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator10;
@@ -489,8 +545,9 @@ public class LoketForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JLabel lblTotalAntrianAdmin;
+    private javax.swing.JLabel lblTotalAntrianCs;
+    private javax.swing.JLabel lblTotalAntrianTeller;
     // End of variables declaration//GEN-END:variables
 }

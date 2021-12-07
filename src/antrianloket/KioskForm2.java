@@ -5,6 +5,18 @@
  */
 package antrianloket;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Sigma
@@ -14,8 +26,56 @@ public class KioskForm2 extends javax.swing.JFrame {
     /**
      * Creates new form KioskForm
      */
+    public static DatagramSocket serversocket;
+    public static DatagramPacket dp;
+    public static BufferedReader dis;
+    public static InetAddress ia;
+    public static byte buf[] = new byte[1024];
+    public static int cport = 789, sport = 790;
+    
+    public ArrayList<String> antrianAdmin = new ArrayList<String>();
+    public ArrayList<String> antrianTeller = new ArrayList<String>();
+    public ArrayList<String> antrianCs = new ArrayList<String>();
+    
+    public int nomorAntrianAdmin =0;
+    public int nomorAntrianTeller =0;
+    public int nomorAntrianCs =0;
+    
+    
+    
     public KioskForm2() {
-        initComponents();
+        try {
+            initComponents();
+            try {
+                serversocket = new DatagramSocket(sport);
+            } catch (SocketException ex) {
+                Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            dp = new DatagramPacket(buf, buf.length);
+            dis = new BufferedReader(new InputStreamReader(System.in));
+            ia = InetAddress.getLocalHost();
+            
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void sendRequest(String type) throws SocketException, UnknownHostException, IOException{
+        String str=" ";
+        System.out.println("tess");
+        
+        if (type.equals("admin")) {
+            nomorAntrianAdmin++;
+            str = "A"+nomorAntrianAdmin;
+        }else if (type.equals("teller")) {
+            nomorAntrianTeller++;
+            str = "T"+nomorAntrianTeller;
+        }else{
+            nomorAntrianCs++;
+            str = "C"+nomorAntrianCs;
+        }
+        buf = str.getBytes();
+        serversocket.send(new DatagramPacket(buf,str.length(), ia, cport));
     }
 
     /**
@@ -27,33 +87,33 @@ public class KioskForm2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnAdmin = new javax.swing.JButton();
+        btnCs = new javax.swing.JButton();
+        btnTeller = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        jButton2.setText("LAYANAN ADMIN");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnAdmin.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        btnAdmin.setText("LAYANAN ADMIN");
+        btnAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnAdminActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        jButton3.setText("LAYANAN CS");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnCs.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        btnCs.setText("LAYANAN CS");
+        btnCs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnCsActionPerformed(evt);
             }
         });
 
-        jButton4.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        jButton4.setText("LAYANAN TELLER");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnTeller.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        btnTeller.setText("LAYANAN TELLER");
+        btnTeller.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnTellerActionPerformed(evt);
             }
         });
 
@@ -64,37 +124,55 @@ public class KioskForm2 extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(171, 171, 171)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnTeller, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCs, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(195, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(72, 72, 72)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCs, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnTeller, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(69, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
+        try {
+            sendRequest("admin");
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAdminActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btnCsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCsActionPerformed
+        try {
+            sendRequest("cs");
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnCsActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void btnTellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTellerActionPerformed
+        try {
+            sendRequest("teller");
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnTellerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -133,8 +211,8 @@ public class KioskForm2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnAdmin;
+    private javax.swing.JButton btnCs;
+    private javax.swing.JButton btnTeller;
     // End of variables declaration//GEN-END:variables
 }
