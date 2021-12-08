@@ -31,18 +31,18 @@ public class LoketForm extends javax.swing.JFrame {
     public static DatagramPacket dp;
     public static BufferedReader dis;
     public static InetAddress ia;
-    public static byte buf[] = new byte[1024];
+    public static byte buf[] = new byte[8];
     public static int cport = 789, sport = 790;
-    
+
     public ArrayList<String> antrianAdmin = new ArrayList<String>();
     public ArrayList<String> antrianTeller = new ArrayList<String>();
     public ArrayList<String> antrianCs = new ArrayList<String>();
-    
-    public int nomorAntrianAdmin =0;
-    public int nomorAntrianTeller =0;
-    public int nomorAntrianCs =0;
 
-    public LoketForm() throws IOException {
+    public int selesaiAdmin = 0;
+    public int selesaiTeller = 0;
+    public int selesaiCs = 0;
+
+    public LoketForm() {
         try {
             initComponents();
             getContentPane().setBackground(Color.GRAY);
@@ -57,27 +57,65 @@ public class LoketForm extends javax.swing.JFrame {
         } catch (UnknownHostException ex) {
             Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
-    public void receive() throws IOException{
+
+    public void receive() throws IOException {
+
         clientsocket.receive(dp);
-        String str = new String(dp.getData(), 0,dp.getLength());
-        switch (str.charAt(0)) {
-            case 'A':
-                antrianAdmin.add(str);
-                lblTotalAntrianAdmin.setText(String.valueOf(antrianAdmin.size()));
-                break;
-            case 'T':
-                antrianTeller.add(str);
-                lblTotalAntrianTeller.setText(String.valueOf(antrianTeller.size()));
-                break;
-            default:
-                antrianCs.add(str);
-                lblTotalAntrianCs.setText(String.valueOf(antrianCs.size()));
-                break;
+        String str = new String(dp.getData(), 0, dp.getLength());
+
+        System.out.println(str);
+
+        String[] arrStr = str.split(",");
+
+        for (int i = antrianAdmin.size(); i < Integer.valueOf(arrStr[0].substring(1)); i++) {
+            antrianAdmin.add("A" + (i + 1));
         }
-        
+        for (int i = antrianTeller.size(); i < Integer.valueOf(arrStr[1].substring(1)); i++) {
+            antrianTeller.add("T" + (i + 1));
+        }
+        for (int i = antrianCs.size(); i < Integer.valueOf(arrStr[2].substring(1)); i++) {
+            antrianCs.add("C" + (i + 1));
+        }
+
+        lblTotalAntrianAdmin.setText(String.valueOf(antrianAdmin.size() - selesaiAdmin));
+        lblTotalAntrianTeller.setText(String.valueOf(antrianTeller.size() - selesaiTeller));
+        lblTotalAntrianCs.setText(String.valueOf(antrianCs.size() - selesaiCs));
+
+        if (selesaiAdmin < antrianAdmin.size()) {
+            lblAntrianAdmin.setText(antrianAdmin.get(selesaiAdmin));
+        }
+        if (selesaiTeller < antrianTeller.size()) {
+            lblAntrianTeller.setText(antrianTeller.get(selesaiTeller));
+        }
+        if (selesaiCs < antrianCs.size()) {
+            lblAntrianCs.setText(antrianCs.get(selesaiCs));
+        }
+
+    }
+
+    public void setMain(String antrian, String loket) {
+        lblMainAntrian.setText(antrian);
+        lblMainLoket.setText(loket);
+    }
+
+    public void setAntrianAdmin(int queue) {
+        lblAntrianAdmin.setText(antrianAdmin.get(queue));
+        selesaiAdmin++;
+        lblTotalAntrianAdmin.setText(String.valueOf(antrianAdmin.size() - selesaiAdmin));
+    }
+
+    public void setAntrianTeller(int queue) {
+        lblAntrianTeller.setText(antrianTeller.get(queue));
+        selesaiTeller++;
+        lblTotalAntrianTeller.setText(String.valueOf(antrianTeller.size() - selesaiTeller));
+    }
+
+    public void setAntrianCs(int queue) {
+        lblAntrianCs.setText(antrianCs.get(queue));
+        selesaiCs++;
+        lblTotalAntrianCs.setText(String.valueOf(antrianCs.size() - selesaiCs));
     }
 
     /**
@@ -89,24 +127,24 @@ public class LoketForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        panelTeller = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblAntrianTeller = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jPanel2 = new javax.swing.JPanel();
+        panelCs = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        lblAntrianCs = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
-        jPanel3 = new javax.swing.JPanel();
+        panelAdmin = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        lblAntrianAdmin = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         jPanel4 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lblMainLoket = new javax.swing.JLabel();
+        lblMainAntrian = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
@@ -120,14 +158,15 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jSeparator10 = new javax.swing.JSeparator();
+        btnMulai = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel1.setBackground(new java.awt.Color(153, 255, 153));
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        panelTeller.setBackground(new java.awt.Color(153, 255, 153));
+        panelTeller.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel1MouseClicked(evt);
+                panelTellerMouseClicked(evt);
             }
         });
 
@@ -137,11 +176,11 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("TELLER");
 
-        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("T001");
+        lblAntrianTeller.setBackground(new java.awt.Color(255, 255, 255));
+        lblAntrianTeller.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lblAntrianTeller.setForeground(new java.awt.Color(255, 255, 255));
+        lblAntrianTeller.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAntrianTeller.setText("-");
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -149,26 +188,26 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("ANTRIAN");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelTellerLayout = new javax.swing.GroupLayout(panelTeller);
+        panelTeller.setLayout(panelTellerLayout);
+        panelTellerLayout.setHorizontalGroup(
+            panelTellerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTellerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelTellerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAntrianTeller, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(jSeparator1))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        panelTellerLayout.setVerticalGroup(
+            panelTellerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTellerLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAntrianTeller, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
@@ -176,10 +215,10 @@ public class LoketForm extends javax.swing.JFrame {
                 .addGap(7, 7, 7))
         );
 
-        jPanel2.setBackground(new java.awt.Color(153, 255, 153));
-        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+        panelCs.setBackground(new java.awt.Color(153, 255, 153));
+        panelCs.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel2MouseClicked(evt);
+                panelCsMouseClicked(evt);
             }
         });
 
@@ -189,11 +228,11 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("CS");
 
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("C001");
+        lblAntrianCs.setBackground(new java.awt.Color(255, 255, 255));
+        lblAntrianCs.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lblAntrianCs.setForeground(new java.awt.Color(255, 255, 255));
+        lblAntrianCs.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAntrianCs.setText("-");
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -201,26 +240,26 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("ANTRIAN");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelCsLayout = new javax.swing.GroupLayout(panelCs);
+        panelCs.setLayout(panelCsLayout);
+        panelCsLayout.setHorizontalGroup(
+            panelCsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelCsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAntrianCs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(jSeparator2))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        panelCsLayout.setVerticalGroup(
+            panelCsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCsLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAntrianCs, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
@@ -228,10 +267,10 @@ public class LoketForm extends javax.swing.JFrame {
                 .addGap(7, 7, 7))
         );
 
-        jPanel3.setBackground(new java.awt.Color(153, 255, 153));
-        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        panelAdmin.setBackground(new java.awt.Color(153, 255, 153));
+        panelAdmin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel3MouseClicked(evt);
+                panelAdminMouseClicked(evt);
             }
         });
 
@@ -241,11 +280,11 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("ADMIN");
 
-        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("A001");
+        lblAntrianAdmin.setBackground(new java.awt.Color(255, 255, 255));
+        lblAntrianAdmin.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lblAntrianAdmin.setForeground(new java.awt.Color(255, 255, 255));
+        lblAntrianAdmin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAntrianAdmin.setText("-");
 
         jLabel9.setBackground(new java.awt.Color(255, 255, 255));
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -253,26 +292,26 @@ public class LoketForm extends javax.swing.JFrame {
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setText("ANTRIAN");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelAdminLayout = new javax.swing.GroupLayout(panelAdmin);
+        panelAdmin.setLayout(panelAdminLayout);
+        panelAdminLayout.setHorizontalGroup(
+            panelAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAdminLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAntrianAdmin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(jSeparator3))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        panelAdminLayout.setVerticalGroup(
+            panelAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAdminLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAntrianAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
@@ -287,15 +326,15 @@ public class LoketForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("ADMIN");
+        lblMainLoket.setBackground(new java.awt.Color(255, 255, 255));
+        lblMainLoket.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblMainLoket.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMainLoket.setText("-");
 
-        jLabel11.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("A001");
+        lblMainAntrian.setBackground(new java.awt.Color(255, 255, 255));
+        lblMainAntrian.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        lblMainAntrian.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMainAntrian.setText("-");
 
         jLabel12.setBackground(new java.awt.Color(255, 255, 255));
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -309,8 +348,8 @@ public class LoketForm extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                    .addComponent(lblMainLoket, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblMainAntrian, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator4)
                     .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -324,11 +363,11 @@ public class LoketForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblMainAntrian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(jLabel10)
+                .addComponent(lblMainLoket)
                 .addGap(7, 7, 7))
         );
 
@@ -420,6 +459,13 @@ public class LoketForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        btnMulai.setText("Refresh");
+        btnMulai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMulaiActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -428,16 +474,21 @@ public class LoketForm extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(64, 64, 64)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(28, 28, 28))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(panelTeller, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(64, 64, 64)
+                                .addComponent(panelCs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(28, 28, 28))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -446,28 +497,60 @@ public class LoketForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addComponent(btnMulai)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panelAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelCs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelTeller, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
+    private void panelTellerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelTellerMouseClicked
+        if (antrianTeller.size() != selesaiTeller) {
+            setMain(antrianTeller.get(selesaiTeller), "TELLER");
+            if (selesaiTeller < antrianTeller.size()) {
+                setAntrianTeller(selesaiTeller);
+            } else {
+                lblAntrianTeller.setText("-");
+            }
+        } else {
+            lblAntrianTeller.setText("-");
+        }
+//            receive();
+    }//GEN-LAST:event_panelTellerMouseClicked
 
-    }//GEN-LAST:event_jPanel1MouseClicked
+    private void panelCsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCsMouseClicked
+        if (antrianCs.size() != selesaiCs) {
+            setMain(antrianCs.get(selesaiCs), "CS");
+            if (selesaiCs < antrianCs.size()) {
+                setAntrianCs(selesaiCs);
+            } else {
+                lblAntrianCs.setText("-");
+            }
+        } else {
+            lblAntrianCs.setText("-");
+        }
+//            receive();
+    }//GEN-LAST:event_panelCsMouseClicked
 
-    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanel2MouseClicked
-
-    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanel3MouseClicked
+    private void panelAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelAdminMouseClicked
+        if (antrianAdmin.size() != selesaiAdmin) {
+            setMain(antrianAdmin.get(selesaiAdmin), "ADMIN");
+            if (selesaiAdmin < antrianAdmin.size()) {
+                setAntrianAdmin(selesaiAdmin);
+            } else {
+                lblAntrianAdmin.setText("-");
+            }
+        } else {
+            lblAntrianAdmin.setText("-");
+        }
+//            receive();
+    }//GEN-LAST:event_panelAdminMouseClicked
 
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
         // TODO add your handling code here:
@@ -476,6 +559,14 @@ public class LoketForm extends javax.swing.JFrame {
     private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jPanel6MouseClicked
+
+    private void btnMulaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMulaiActionPerformed
+        try {
+            receive();
+        } catch (IOException ex) {
+            Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnMulaiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -507,36 +598,24 @@ public class LoketForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new LoketForm().setVisible(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                new LoketForm().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnMulai;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator1;
@@ -546,8 +625,16 @@ public class LoketForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JLabel lblAntrianAdmin;
+    private javax.swing.JLabel lblAntrianCs;
+    private javax.swing.JLabel lblAntrianTeller;
+    private javax.swing.JLabel lblMainAntrian;
+    private javax.swing.JLabel lblMainLoket;
     private javax.swing.JLabel lblTotalAntrianAdmin;
     private javax.swing.JLabel lblTotalAntrianCs;
     private javax.swing.JLabel lblTotalAntrianTeller;
+    private javax.swing.JPanel panelAdmin;
+    private javax.swing.JPanel panelCs;
+    private javax.swing.JPanel panelTeller;
     // End of variables declaration//GEN-END:variables
 }

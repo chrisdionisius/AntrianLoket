@@ -13,7 +13,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,17 +29,12 @@ public class KioskForm2 extends javax.swing.JFrame {
     public static DatagramPacket dp;
     public static BufferedReader dis;
     public static InetAddress ia;
-    public static byte buf[] = new byte[1024];
+    public static byte buf[] = new byte[8];
     public static int cport = 789, sport = 790;
-    
-    public ArrayList<String> antrianAdmin = new ArrayList<String>();
-    public ArrayList<String> antrianTeller = new ArrayList<String>();
-    public ArrayList<String> antrianCs = new ArrayList<String>();
-    
+        
     public int nomorAntrianAdmin =0;
     public int nomorAntrianTeller =0;
     public int nomorAntrianCs =0;
-    
     
     
     public KioskForm2() {
@@ -61,19 +55,18 @@ public class KioskForm2 extends javax.swing.JFrame {
     }
     
     public void sendRequest(String type) throws SocketException, UnknownHostException, IOException{
-        String str=" ";
+        String str;
         System.out.println("tess");
         
         if (type.equals("admin")) {
             nomorAntrianAdmin++;
-            str = "A"+nomorAntrianAdmin;
         }else if (type.equals("teller")) {
             nomorAntrianTeller++;
-            str = "T"+nomorAntrianTeller;
         }else{
             nomorAntrianCs++;
-            str = "C"+nomorAntrianCs;
         }
+        
+        str="A"+nomorAntrianAdmin+",T"+nomorAntrianTeller+",C"+nomorAntrianCs;
         buf = str.getBytes();
         serversocket.send(new DatagramPacket(buf,str.length(), ia, cport));
     }
