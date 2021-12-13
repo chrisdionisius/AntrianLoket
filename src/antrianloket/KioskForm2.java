@@ -5,6 +5,8 @@
  */
 package antrianloket;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +17,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,15 +35,22 @@ public class KioskForm2 extends javax.swing.JFrame {
     public static InetAddress ia;
     public static byte buf[] = new byte[8];
     public static int cport = 788, sport = 790;
-        
-    public int nomorAntrianAdmin =0;
-    public int nomorAntrianTeller =0;
-    public int nomorAntrianCs =0;
-    
-    
+
+    public int nomorAntrianAdmin = 0;
+    public int nomorAntrianTeller = 0;
+    public int nomorAntrianCs = 0;
+
+    public NomorAntrian nomorAntrian = new NomorAntrian();
+
     public KioskForm2() {
+        initComponents();
+
+        initComponents();
+        Toolkit tk = getToolkit();
+        Dimension size = tk.getScreenSize();
+        setLocation(size.width / 2 - getWidth() / 2, size.width / 5 - getHeight() / 5);
+
         try {
-            initComponents();
             try {
                 serversocket = new DatagramSocket(sport);
             } catch (SocketException ex) {
@@ -47,28 +58,54 @@ public class KioskForm2 extends javax.swing.JFrame {
             }
             dp = new DatagramPacket(buf, buf.length);
             dis = new BufferedReader(new InputStreamReader(System.in));
-            ia = InetAddress.getLocalHost();
-            
+            JFrame frame = new JFrame();
+            Object result = JOptionPane.showInputDialog(frame, "Input IP Loket :");
+            ia = InetAddress.getByName("192.168.1.2");
+
         } catch (UnknownHostException ex) {
             Logger.getLogger(KioskForm2.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void sendRequest(String type) throws SocketException, UnknownHostException, IOException{
+
+    public void sendRequest(String type) throws SocketException, UnknownHostException, IOException {
         String str;
         System.out.println("tess");
-        
-        if (type.equals("admin")) {
-            nomorAntrianAdmin++;
-        }else if (type.equals("teller")) {
-            nomorAntrianTeller++;
-        }else{
-            nomorAntrianCs++;
+
+        switch (type) {
+            case "admin":
+                nomorAntrianAdmin++;
+                break;
+            case "teller":
+                nomorAntrianTeller++;
+                break;
+            default:
+                nomorAntrianCs++;
+                break;
         }
-        
-        str="A"+nomorAntrianAdmin+",T"+nomorAntrianTeller+",C"+nomorAntrianCs;
+
+        str = "A" + nomorAntrianAdmin + ",T" + nomorAntrianTeller + ",C" + nomorAntrianCs;
         buf = str.getBytes();
-        serversocket.send(new DatagramPacket(buf,str.length(), ia, cport));
+        serversocket.send(new DatagramPacket(buf, str.length(), ia, cport));
+
+        //receive from loket
+        serversocket.receive(dp);
+        String sisa = new String(dp.getData(), 0, dp.getLength());
+        String[] arrSisa = sisa.split(",");
+
+        switch (type) {
+            case "admin":
+                nomorAntrian.setLayanan("ADMIN", "A" + nomorAntrianAdmin, arrSisa[0]);
+                break;
+            case "teller":
+                nomorAntrian.setLayanan("TELLER", "T" + nomorAntrianTeller, arrSisa[1]);
+                break;
+            default:
+                nomorAntrian.setLayanan("CS", "C" + nomorAntrianCs, arrSisa[2]);
+                break;
+        }
+
+        nomorAntrian.setEnabled(true);
+        nomorAntrian.setVisible(true);
     }
 
     /**
@@ -215,10 +252,8 @@ public class KioskForm2 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new KioskForm2().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new KioskForm2().setVisible(true);
         });
     }
 

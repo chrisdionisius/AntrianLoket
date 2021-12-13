@@ -6,17 +6,10 @@
 package antrianloket;
 
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  *
@@ -27,12 +20,6 @@ public class LoketForm extends javax.swing.JFrame {
     /**
      * Creates new form LoketForm
      */
-    public static DatagramSocket clientsocket;
-    public static DatagramPacket dp;
-    public static BufferedReader dis;
-    public static InetAddress ia;
-    public static byte buf[] = new byte[8];
-    public static int cport = 789, sport = 790;
 
     public ArrayList<String> antrianAdmin = new ArrayList<>();
     public ArrayList<String> antrianTeller = new ArrayList<>();
@@ -45,6 +32,10 @@ public class LoketForm extends javax.swing.JFrame {
     public LoketForm() {
         initComponents();
         getContentPane().setBackground(Color.GRAY);
+        initComponents();
+        Toolkit tk = getToolkit();
+        Dimension size = tk.getScreenSize();
+        setLocation(size.width/2-getWidth()/2, size.width/5-getHeight()/5);
     }
 
     public void receiveArray(String array){

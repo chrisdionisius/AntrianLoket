@@ -12,6 +12,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -25,10 +28,10 @@ public class LoketClient {
     public static InetAddress ia;
     public static byte buf[] = new byte[1024];
     public static int cport = 788, sport = 790;
-    
-    public ArrayList<String> antrianAdmin = new ArrayList<String>();
-    public ArrayList<String> antrianTeller = new ArrayList<String>();
-    public ArrayList<String> antrianCs = new ArrayList<String>();
+
+    public ArrayList<String> antrianAdmin;
+    public ArrayList<String> antrianTeller;
+    public ArrayList<String> antrianCs;
 
     public int nomorAntrianAdmin = 0;
     public int nomorAntrianTeller = 0;
@@ -38,30 +41,34 @@ public class LoketClient {
         clientsocket = new DatagramSocket(cport);
         dp = new DatagramPacket(buf, buf.length);
         dis = new BufferedReader(new InputStreamReader(System.in));
-        ia = InetAddress.getLocalHost();
-        System.out.println("Server is Running...");
-        LoketForm loketForm =  new LoketForm();
         
+        JFrame frame = new JFrame();
+        Object result = JOptionPane.showInputDialog(frame, "Input IP Kiosk :");
+        
+        ia = InetAddress.getByName(String.valueOf(result));
+        System.out.println("Server is Running...");
+        
+        LoketForm loketForm = new LoketForm();
+
         loketForm.setEnabled(true);
         loketForm.setVisible(true);
-        
-        
-        
-        while(true){
-        clientsocket.receive(dp);
-        String str = new String(dp.getData(), 0, dp.getLength());
-            System.out.println("ppppp");
-        
-        loketForm.receiveArray(str);
-        
-//        String[] arrOfStr = str.split(",");
-//        
-//        System.out.println(arrOfStr[0]);
-//        System.out.println(arrOfStr[1]);
-//        System.out.println(arrOfStr[2]);
-//        
-//        System.out.println("Server: " + str);
+
+        while (true) {
+            clientsocket.receive(dp);
+            String str = new String(dp.getData(), 0, dp.getLength());
+            loketForm.receiveArray(str);
+            String pesan = (loketForm.antrianAdmin.size() - loketForm.selesaiAdmin)
+                    + "," + (loketForm.antrianTeller.size() - loketForm.selesaiTeller)
+                    + "," + (loketForm.antrianCs.size() - loketForm.selesaiCs);
+            buf = pesan.getBytes();
+            clientsocket.send(new DatagramPacket(buf, pesan.length(), ia, sport));
         }
+    }
+
+    public LoketClient() {
+        this.antrianAdmin = new ArrayList<>();
+        this.antrianTeller = new ArrayList<>();
+        this.antrianCs = new ArrayList<>();
         
     }
 }
