@@ -30,7 +30,7 @@ public class KioskForm2 extends javax.swing.JFrame {
     public static BufferedReader dis;
     public static InetAddress ia;
     public static byte buf[] = new byte[8];
-    public static int cport = 789, sport = 790;
+    public static int cport = 788, sport = 790;
         
     public int nomorAntrianAdmin =0;
     public int nomorAntrianTeller =0;

@@ -17,14 +17,14 @@ import java.util.ArrayList;
  *
  * @author Sigma
  */
-public class Test {
+public class LoketClient {
 
     public static DatagramSocket clientsocket;
     public static DatagramPacket dp;
     public static BufferedReader dis;
     public static InetAddress ia;
     public static byte buf[] = new byte[1024];
-    public static int cport = 789, sport = 790;
+    public static int cport = 788, sport = 790;
     
     public ArrayList<String> antrianAdmin = new ArrayList<String>();
     public ArrayList<String> antrianTeller = new ArrayList<String>();
@@ -40,18 +40,27 @@ public class Test {
         dis = new BufferedReader(new InputStreamReader(System.in));
         ia = InetAddress.getLocalHost();
         System.out.println("Server is Running...");
+        LoketForm loketForm =  new LoketForm();
+        
+        loketForm.setEnabled(true);
+        loketForm.setVisible(true);
+        
+        
         
         while(true){
         clientsocket.receive(dp);
         String str = new String(dp.getData(), 0, dp.getLength());
+            System.out.println("ppppp");
         
-        String[] arrOfStr = str.split(",");
+        loketForm.receiveArray(str);
         
-        System.out.println(arrOfStr[0]);
-        System.out.println(arrOfStr[1]);
-        System.out.println(arrOfStr[2]);
-        
-        System.out.println("Server: " + str);
+//        String[] arrOfStr = str.split(",");
+//        
+//        System.out.println(arrOfStr[0]);
+//        System.out.println(arrOfStr[1]);
+//        System.out.println(arrOfStr[2]);
+//        
+//        System.out.println("Server: " + str);
         }
         
     }

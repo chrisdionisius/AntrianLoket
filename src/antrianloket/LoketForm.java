@@ -34,40 +34,21 @@ public class LoketForm extends javax.swing.JFrame {
     public static byte buf[] = new byte[8];
     public static int cport = 789, sport = 790;
 
-    public ArrayList<String> antrianAdmin = new ArrayList<String>();
-    public ArrayList<String> antrianTeller = new ArrayList<String>();
-    public ArrayList<String> antrianCs = new ArrayList<String>();
+    public ArrayList<String> antrianAdmin = new ArrayList<>();
+    public ArrayList<String> antrianTeller = new ArrayList<>();
+    public ArrayList<String> antrianCs = new ArrayList<>();
 
     public int selesaiAdmin = 0;
     public int selesaiTeller = 0;
     public int selesaiCs = 0;
 
     public LoketForm() {
-        try {
-            initComponents();
-            getContentPane().setBackground(Color.GRAY);
-            try {
-                clientsocket = new DatagramSocket(cport);
-            } catch (SocketException ex) {
-                Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            dp = new DatagramPacket(buf, buf.length);
-            dis = new BufferedReader(new InputStreamReader(System.in));
-            ia = InetAddress.getLocalHost();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        initComponents();
+        getContentPane().setBackground(Color.GRAY);
     }
 
-    public void receive() throws IOException {
-
-        clientsocket.receive(dp);
-        String str = new String(dp.getData(), 0, dp.getLength());
-
-        System.out.println(str);
-
-        String[] arrStr = str.split(",");
+    public void receiveArray(String array){
+        String[] arrStr = array.split(",");
 
         for (int i = antrianAdmin.size(); i < Integer.valueOf(arrStr[0].substring(1)); i++) {
             antrianAdmin.add("A" + (i + 1));
@@ -92,8 +73,8 @@ public class LoketForm extends javax.swing.JFrame {
         if (selesaiCs < antrianCs.size()) {
             lblAntrianCs.setText(antrianCs.get(selesaiCs));
         }
-
     }
+    
 
     public void setMain(String antrian, String loket) {
         lblMainAntrian.setText(antrian);
@@ -546,11 +527,7 @@ public class LoketForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnMulaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMulaiActionPerformed
-        try {
-            receive();
-        } catch (IOException ex) {
-            Logger.getLogger(LoketForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }//GEN-LAST:event_btnMulaiActionPerformed
 
     private void panelAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelAdminMouseClicked
@@ -564,7 +541,6 @@ public class LoketForm extends javax.swing.JFrame {
         } else {
             lblAntrianAdmin.setText("-");
         }
-        //            receive();
     }//GEN-LAST:event_panelAdminMouseClicked
 
     private void panelTellerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelTellerMouseClicked
@@ -578,7 +554,6 @@ public class LoketForm extends javax.swing.JFrame {
         } else {
             lblAntrianTeller.setText("-");
         }
-        //            receive();
     }//GEN-LAST:event_panelTellerMouseClicked
 
     private void panelCsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelCsMouseClicked
@@ -592,7 +567,6 @@ public class LoketForm extends javax.swing.JFrame {
         } else {
             lblAntrianCs.setText("-");
         }
-        //            receive();
     }//GEN-LAST:event_panelCsMouseClicked
 
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
